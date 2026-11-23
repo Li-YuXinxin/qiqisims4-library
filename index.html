@@ -1,0 +1,684 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>资源索引</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📚</text></svg>" />
+<style>
+  /* ============ Notion 设计变量 ============ */
+  :root {
+    --bg: #ffffff;
+    --bg-hover: #f7f7f5;
+    --bg-chip: #f1f1ef;
+    --text: #37352f;
+    --text-sub: #73716d;
+    --text-faint: #9b9a97;
+    --border: #ececea;
+    --border-strong: #e3e2de;
+    --accent: #2383e2;
+    --accent-hover: #1a74cc;
+    --radius: 8px;
+    --radius-sm: 5px;
+    --shadow-drawer: 0 0 40px rgba(15, 15, 15, 0.15);
+    --font: -apple-system, BlinkMacSystemFont, "Segoe UI", Inter,
+      "Noto Sans SC", "PingFang SC", "Microsoft YaHei", sans-serif;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html, body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font);
+    font-size: 15px;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  a { color: var(--accent); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+
+  .wrap {
+    max-width: 1080px;
+    margin: 0 auto;
+    padding: 0 24px;
+  }
+
+  /* ============ 顶部 ============ */
+  header.site {
+    padding: 32px 0 8px;
+  }
+  .site-title {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 30px;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+  }
+  .site-title .emoji {
+    width: 40px; height: 40px;
+    display: inline-flex; align-items: center; justify-content: center;
+    font-size: 24px;
+    background: var(--bg-chip);
+    border-radius: var(--radius-sm);
+  }
+  .site-sub {
+    margin-top: 6px;
+    color: var(--text-sub);
+    font-size: 14px;
+  }
+
+  /* 搜索框（Notion 风格） */
+  .search-bar {
+    margin: 20px 0 8px;
+    position: relative;
+  }
+  .search-bar svg {
+    position: absolute; left: 12px; top: 50%; transform: translateY(-50%);
+    width: 16px; height: 16px; color: var(--text-faint);
+  }
+  .search-bar input {
+    width: 100%;
+    padding: 9px 12px 9px 36px;
+    border: 1px solid transparent;
+    border-radius: var(--radius-sm);
+    background: var(--bg-chip);
+    font-size: 14px;
+    font-family: var(--font);
+    color: var(--text);
+    outline: none;
+  }
+  .search-bar input::placeholder { color: var(--text-faint); }
+  .search-bar input:focus { background: var(--bg); border-color: var(--border-strong); }
+
+  /* ============ 公告 Callout ============ */
+  .callout {
+    display: flex;
+    gap: 10px;
+    background: var(--bg-chip);
+    border-radius: var(--radius);
+    padding: 14px 16px;
+    margin: 16px 0 8px;
+    font-size: 14px;
+    color: var(--text-sub);
+  }
+  .callout .icon { font-size: 18px; line-height: 1.4; }
+
+  /* ============ 分类 Tabs ============ */
+  .tabs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    margin: 20px 0 12px;
+    border-bottom: 1px solid var(--border);
+  }
+  .tab {
+    appearance: none;
+    background: none;
+    border: none;
+    font-family: var(--font);
+    font-size: 14px;
+    color: var(--text-sub);
+    padding: 8px 12px;
+    border-radius: var(--radius-sm) var(--radius-sm) 0 0;
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    margin-bottom: -1px;
+  }
+  .tab:hover { background: var(--bg-hover); color: var(--text); }
+  .tab.active {
+    color: var(--text);
+    font-weight: 500;
+    border-bottom-color: var(--text);
+  }
+
+  /* ============ 工具行：版本筛选 + 视图 ============ */
+  .toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin: 16px 0;
+  }
+
+  .view-switch {
+    display: inline-flex;
+    background: var(--bg-chip);
+    border-radius: var(--radius-sm);
+    padding: 3px;
+    gap: 2px;
+  }
+  .view-switch button {
+    appearance: none; border: none; background: none;
+    font-family: var(--font); font-size: 13px; color: var(--text-sub);
+    padding: 4px 10px; border-radius: 4px; cursor: pointer;
+    display: inline-flex; align-items: center; gap: 5px;
+  }
+  .view-switch button.active { background: #fff; color: var(--text); box-shadow: 0 1px 2px rgba(0,0,0,.08); }
+
+  .result-count { font-size: 13px; color: var(--text-faint); }
+
+  /* ============ 画廊卡片 ============ */
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+  }
+  @media (max-width: 900px) { .grid { grid-template-columns: repeat(2, 1fr); } }
+  @media (max-width: 600px) { .grid { grid-template-columns: 1fr; } }
+
+  .card {
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+    background: var(--bg);
+    cursor: pointer;
+    transition: background .12s, box-shadow .12s;
+    display: flex;
+    flex-direction: column;
+  }
+  .card:hover { background: var(--bg-hover); box-shadow: 0 2px 8px rgba(15,15,15,.06); }
+
+  .cover {
+    aspect-ratio: 16 / 10;
+    background: linear-gradient(135deg, #f3f2ef, #e8e7e3);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 40px; color: var(--text-faint);
+    overflow: hidden;
+  }
+  .cover img { width: 100%; height: 100%; object-fit: cover; }
+
+  .card-body { padding: 14px 16px 16px; display: flex; flex-direction: column; gap: 8px; flex: 1; }
+  .card-title { font-size: 15px; font-weight: 600; line-height: 1.45; }
+  .card-author { font-size: 12px; color: var(--text-faint); }
+  .card-desc { font-size: 13px; color: var(--text-sub); line-height: 1.55;
+    display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+
+  .meta-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: auto; padding-top: 6px; }
+  .tag {
+    font-size: 12px; color: var(--text-sub);
+    background: var(--bg-chip);
+    padding: 2px 8px; border-radius: var(--radius-sm);
+  }
+  .tag.ver { color: var(--accent); background: rgba(35,131,226,.1); }
+
+  /* ============ 列表视图 ============ */
+  .list { display: flex; flex-direction: column; border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; }
+  .list-row {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 12px;
+    padding: 14px 16px;
+    border-top: 1px solid var(--border);
+    cursor: pointer;
+    align-items: center;
+  }
+  .list-row:first-child { border-top: none; }
+  .list-row:hover { background: var(--bg-hover); }
+  .list-row .left { min-width: 0; }
+  .list-row .card-title { margin-bottom: 2px; }
+  .list-row .card-desc { -webkit-line-clamp: 1; }
+  .list-row .meta-tags { padding-top: 4px; }
+
+  .empty {
+    text-align: center; color: var(--text-faint);
+    padding: 60px 0; font-size: 14px;
+  }
+
+  /* ============ 分页 ============ */
+  .pagination {
+    display: flex; align-items: center; justify-content: center;
+    gap: 6px; margin: 32px 0 48px;
+  }
+  .pagination button {
+    appearance: none; border: 1px solid var(--border-strong); background: #fff;
+    font-family: var(--font); font-size: 13px; color: var(--text-sub);
+    min-width: 32px; height: 32px; border-radius: var(--radius-sm); cursor: pointer;
+    padding: 0 8px;
+  }
+  .pagination button:hover:not(:disabled) { background: var(--bg-hover); }
+  .pagination button.active { background: var(--text); color: #fff; border-color: var(--text); }
+  .pagination button:disabled { opacity: .4; cursor: default; }
+
+  /* ============ 详情抽屉 ============ */
+  .overlay {
+    position: fixed; inset: 0; background: rgba(15,15,15,.35);
+    opacity: 0; pointer-events: none; transition: opacity .2s; z-index: 40;
+  }
+  .overlay.open { opacity: 1; pointer-events: auto; }
+
+  .drawer {
+    position: fixed; top: 0; right: 0; height: 100%; width: min(720px, 100vw);
+    background: #fff; z-index: 50;
+    transform: translateX(100%); transition: transform .22s ease;
+    box-shadow: var(--shadow-drawer);
+    display: flex; flex-direction: column;
+  }
+  .drawer.open { transform: translateX(0); }
+
+  .drawer-head {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 16px 24px; border-bottom: 1px solid var(--border);
+  }
+  .drawer-head .crumb { font-size: 14px; color: var(--text-sub); }
+  .drawer-close {
+    appearance: none; border: none; background: none; cursor: pointer;
+    width: 32px; height: 32px; border-radius: var(--radius-sm);
+    font-size: 18px; color: var(--text-sub);
+    display: inline-flex; align-items: center; justify-content: center;
+  }
+  .drawer-close:hover { background: var(--bg-hover); }
+
+  .drawer-body { overflow-y: auto; padding: 28px 32px 80px; }
+  .drawer-cover {
+    aspect-ratio: 16 / 9; border-radius: var(--radius); overflow: hidden;
+    background: linear-gradient(135deg,#f3f2ef,#e8e7e3);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 56px; color: var(--text-faint); margin-bottom: 24px;
+  }
+  .drawer-cover img { width: 100%; height: 100%; object-fit: cover; }
+
+  .drawer-title { font-size: 28px; font-weight: 700; line-height: 1.3; letter-spacing: -0.01em; margin-bottom: 16px; }
+
+  .props {
+    display: grid; grid-template-columns: repeat(2, 1fr);
+    border: 1px solid var(--border); border-radius: var(--radius);
+    overflow: hidden; margin: 20px 0; font-size: 14px;
+  }
+  .prop { display: flex; gap: 10px; padding: 10px 14px; border-top: 1px solid var(--border); }
+  .prop:nth-child(-n+2) { border-top: none; }
+  .prop .k { color: var(--text-faint); width: 64px; flex-shrink: 0; }
+  .prop .v { color: var(--text); }
+
+  .drawer-detail { margin-top: 20px; font-size: 15px; }
+  .drawer-detail h3 { font-size: 17px; font-weight: 600; margin: 20px 0 8px; }
+  .drawer-detail p { margin: 8px 0; color: var(--text); }
+  .drawer-detail ul, .drawer-detail ol { margin: 8px 0 8px 22px; }
+  .drawer-detail li { margin: 4px 0; }
+
+  .actions {
+    display: flex; flex-wrap: wrap; gap: 10px; margin-top: 28px;
+    padding: 16px 0; border-top: 1px solid var(--border);
+  }
+  .btn {
+    appearance: none; font-family: var(--font); font-size: 14px;
+    padding: 9px 16px; border-radius: var(--radius-sm); cursor: pointer;
+    display: inline-flex; align-items: center; gap: 8px;
+    border: 1px solid var(--border-strong); background: #fff; color: var(--text);
+  }
+  .btn:hover { background: var(--bg-hover); }
+  .btn.primary { background: var(--accent); border-color: var(--accent); color: #fff; }
+  .btn.primary:hover { background: var(--accent-hover); }
+  .btn .code { font-size: 13px; opacity: .85; }
+
+  footer.site {
+    text-align: center; color: var(--text-faint); font-size: 12px;
+    padding: 24px 0 40px;
+  }
+
+  @media (max-width: 600px) {
+    .drawer-body { padding: 20px 18px 60px; }
+    .props { grid-template-columns: 1fr; }
+    .prop:nth-child(2) { border-top: 1px solid var(--border); }
+  }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <!-- 顶部 -->
+  <header class="site">
+    <div class="site-title">
+      <span class="emoji" id="siteEmoji">📚</span>
+      <span id="siteTitle">资源索引</span>
+    </div>
+    <div class="site-sub" id="siteSub">按分类筛选，点击卡片查看网盘链接</div>
+  </header>
+
+  <!-- 搜索 -->
+  <div class="search-bar">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <circle cx="11" cy="11" r="7"></circle>
+      <path d="m20 20-3.5-3.5"></path>
+    </svg>
+    <input id="searchInput" type="text" placeholder="搜索标题、标签、简介…" />
+  </div>
+
+  <!-- 公告 -->
+  <div class="callout" id="noticeBox">
+    <span class="icon">⚠️</span>
+    <span id="noticeText"></span>
+  </div>
+
+  <!-- 分类 Tabs -->
+  <nav class="tabs" id="tabs"></nav>
+
+  <!-- 工具行 -->
+  <div class="toolbar">
+    <div style="display:flex; align-items:center; gap:12px;">
+      <span class="result-count" id="resultCount"></span>
+      <div class="view-switch">
+        <button id="btnGallery" class="active" title="画廊视图">▦ 画廊</button>
+        <button id="btnList" title="列表视图">☰ 列表</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 内容区 -->
+  <div id="content"></div>
+
+  <!-- 分页 -->
+  <div class="pagination" id="pagination"></div>
+
+  <footer class="site">本站仅作公开索引 · 资源版权归原作者所有</footer>
+</div>
+
+<!-- 详情抽屉 -->
+<div class="overlay" id="overlay"></div>
+<aside class="drawer" id="drawer">
+  <div class="drawer-head">
+    <span class="crumb">资源详情</span>
+    <button class="drawer-close" id="drawerClose" aria-label="关闭">✕</button>
+  </div>
+  <div class="drawer-body" id="drawerBody"></div>
+</aside>
+
+<script>
+/* ============ 兜底数据（file:// 双击预览时使用；部署后以 data.json 为准） ============ */
+const FALLBACK_DATA = {
+  site: {
+    emoji: "📚", title: "模拟人生4 · 资源索引",
+    notice: "本站仅收录网络公开网盘索引链接，不存储任何资源本体；版权归原作者所有。",
+    categories: ["模组推荐", "房屋分享", "家具CC", "服装CC", "实用工具"],
+    pageSize: 12
+  },
+  items: []
+};
+
+/* ============ 状态 ============ */
+const state = {
+  data: FALLBACK_DATA,
+  category: "",
+  query: "",
+  view: "gallery",
+  page: 1
+};
+
+const $ = (id) => document.getElementById(id);
+
+/* ============ 数据加载 ============ */
+async function loadData() {
+  try {
+    const res = await fetch("data.json", { cache: "no-cache" });
+    if (!res.ok) throw new Error("http " + res.status);
+    const json = await res.json();
+    // 兼容两种格式：完整对象 {site, items}，或纯数组 [ {...}, {...} ]
+    if (Array.isArray(json)) {
+      state.data = Object.assign({}, FALLBACK_DATA, { items: json });
+    } else {
+      state.data = Object.assign({}, FALLBACK_DATA, json, {
+        site: Object.assign({}, FALLBACK_DATA.site, json.site || {}),
+        items: json.items || []
+      });
+    }
+  } catch (e) {
+    console.warn("data.json 加载失败，使用兜底数据：", e);
+  }
+  initSiteMeta();
+  render();
+}
+
+function initSiteMeta() {
+  const s = state.data.site;
+  $("siteEmoji").textContent = s.emoji || "📚";
+  $("siteTitle").textContent = s.title || "资源索引";
+  document.title = s.title || "资源索引";
+  $("noticeText").textContent = s.notice || "";
+  if (!state.category && (s.categories || []).length) {
+    state.category = s.categories[0];
+  }
+}
+
+/* ============ 过滤 ============ */
+function getFiltered() {
+  const q = state.query.trim().toLowerCase();
+  return state.data.items.filter((it) => {
+    if (state.category && it.category !== state.category) return false;
+    if (q) {
+      const hay = [it.title, it.desc, it.author, it.gameVer, (it.tags || []).join(" ")]
+        .join(" ").toLowerCase();
+      if (!hay.includes(q)) return false;
+    }
+    return true;
+  });
+}
+
+/* ============ 渲染：Tabs ============ */
+function renderTabs() {
+  const cats = state.data.site.categories || [];
+  const box = $("tabs");
+  box.innerHTML = "";
+  cats.forEach((c) => {
+    const btn = document.createElement("button");
+    btn.className = "tab" + (state.category === c ? " active" : "");
+    btn.textContent = c;
+    btn.onclick = () => { state.category = c; state.page = 1; render(); };
+    box.appendChild(btn);
+  });
+}
+
+/* ============ 卡片 HTML ============ */
+function coverHTML(it, cls) {
+  if (it.cover) {
+    return `<div class="${cls}"><img src="${escapeHTML(it.cover)}" alt=""></div>`;
+  }
+  return `<div class="${cls}">🖼️</div>`;
+}
+
+function tagsHTML(it) {
+  const tags = (it.tags || []).map((t) => `<span class="tag">${escapeHTML(t)}</span>`).join("");
+  const ver = (it.gameVer || it.version) ? `<span class="tag ver">${escapeHTML(it.gameVer || it.version)}</span>` : "";
+  return `<div class="meta-tags">${ver}${tags}</div>`;
+}
+
+function authorHTML(it) {
+  return `<div class="card-author">作者：${escapeHTML(it.author || "未填写")}</div>`;
+}
+
+/* 卡片摘要：把 Markdown 详情压成纯文本 */
+function plainDesc(it) {
+  const raw = String(it.desc || "").replace(/^#+\s*/gm, "").replace(/^[-•]\s*/gm, "")
+    .replace(/^\d+\.\s*/gm, "").replace(/\s+/g, " ").trim();
+  return raw;
+}
+
+function cardHTML(it, idx) {
+  return `
+    <article class="card" data-idx="${idx}">
+      ${coverHTML(it, "cover")}
+      <div class="card-body">
+        <div class="card-title">${escapeHTML(it.title)}</div>
+        ${authorHTML(it)}
+        <div class="card-desc">${escapeHTML(plainDesc(it))}</div>
+        ${tagsHTML(it)}
+      </div>
+    </article>`;
+}
+
+function rowHTML(it, idx) {
+  return `
+    <div class="list-row" data-idx="${idx}">
+      <div class="left">
+        <div class="card-title">${escapeHTML(it.title)}</div>
+        <div class="card-author">作者：${escapeHTML(it.author || "未填写")}</div>
+        <div class="card-desc">${escapeHTML(plainDesc(it))}</div>
+        ${tagsHTML(it)}
+      </div>
+      <div class="meta-tags" style="margin-top:0;">
+        <span class="tag">${escapeHTML(it.category || "")}</span>
+      </div>
+    </div>`;
+}
+
+/* ============ 主渲染 ============ */
+function render() {
+  renderTabs();
+
+  const filtered = getFiltered();
+  const pageSize = state.data.site.pageSize || 12;
+  const totalPages = Math.max(1, Math.ceil(filtered.length / pageSize));
+  if (state.page > totalPages) state.page = totalPages;
+
+  const start = (state.page - 1) * pageSize;
+  const pageItems = filtered.slice(start, start + pageSize);
+
+  const box = $("content");
+  $("resultCount").textContent = `共 ${filtered.length} 条`;
+
+  if (pageItems.length === 0) {
+    box.innerHTML = `<div class="empty">没有找到匹配的资源</div>`;
+  } else if (state.view === "gallery") {
+    box.innerHTML = `<div class="grid">${pageItems.map((it) => cardHTML(it, state.data.items.indexOf(it))).join("")}</div>`;
+  } else {
+    box.innerHTML = `<div class="list">${pageItems.map((it) => rowHTML(it, state.data.items.indexOf(it))).join("")}</div>`;
+  }
+
+  box.querySelectorAll("[data-idx]").forEach((el) => {
+    el.onclick = () => openDrawer(Number(el.dataset.idx));
+  });
+
+  renderPagination(totalPages);
+}
+
+/* ============ 分页 ============ */
+function renderPagination(totalPages) {
+  const box = $("pagination");
+  box.innerHTML = "";
+  if (totalPages <= 1) { box.style.display = "none"; return; }
+  box.style.display = "flex";
+
+  const prev = document.createElement("button");
+  prev.textContent = "‹ 上一页";
+  prev.disabled = state.page === 1;
+  prev.onclick = () => { state.page--; render(); };
+  box.appendChild(prev);
+
+  for (let p = 1; p <= totalPages; p++) {
+    const b = document.createElement("button");
+    b.textContent = p;
+    b.className = p === state.page ? "active" : "";
+    b.onclick = () => { state.page = p; render(); };
+    box.appendChild(b);
+  }
+
+  const next = document.createElement("button");
+  next.textContent = "下一页 ›";
+  next.disabled = state.page === totalPages;
+  next.onclick = () => { state.page++; render(); };
+  box.appendChild(next);
+}
+
+/* ============ 详情抽屉 ============ */
+function openDrawer(idx) {
+  const it = state.data.items[idx];
+  if (!it) return;
+
+  const body = $("drawerBody");
+  body.innerHTML = `
+    ${coverHTML(it, "drawer-cover")}
+    <h1 class="drawer-title">${escapeHTML(it.title)}</h1>
+    <div class="props">
+      <div class="prop"><span class="k">分类</span><span class="v">${escapeHTML(it.category || "-")}</span></div>
+      <div class="prop"><span class="k">版本</span><span class="v">${escapeHTML(it.gameVer || it.version || "-")}</span></div>
+      <div class="prop"><span class="k">作者</span><span class="v">${escapeHTML(it.author || "-")}</span></div>
+      <div class="prop"><span class="k">标签</span><span class="v">${escapeHTML((it.tags || []).join(" / ") || "-")}</span></div>
+    </div>
+    <div class="drawer-detail">${renderDetail(it.detail || it.desc || "")}</div>
+    <div class="actions">
+      <a class="btn primary" href="${escapeHTML(it.link || "#")}" target="_blank" rel="noopener">
+        📦 打开网盘链接
+      </a>
+      ${it.code ? `<button class="btn" id="copyCode">提取码：<span class="code">${escapeHTML(it.code)}</span></button>` : ""}
+    </div>
+  `;
+
+  if (it.code) {
+    $("copyCode").onclick = async () => {
+      try {
+        await navigator.clipboard.writeText(it.code);
+        $("copyCode").querySelector(".code").textContent = "已复制 ✓";
+      } catch (e) { /* 剪贴板不可用时忽略 */ }
+    };
+  }
+
+  $("drawer").classList.add("open");
+  $("overlay").classList.add("open");
+  document.body.style.overflow = "hidden";
+}
+
+function closeDrawer() {
+  $("drawer").classList.remove("open");
+  $("overlay").classList.remove("open");
+  document.body.style.overflow = "";
+}
+
+/* 简易 Markdown：## 标题 / - 列表 / 1. 列表 / 段落 */
+function renderDetail(md) {
+  const lines = md.split("\n");
+  let html = "", listType = null;
+  const closeList = () => { if (listType) { html += `</${listType}>`; listType = null; } };
+
+  lines.forEach((raw) => {
+    const line = raw.trim();
+    if (!line) { closeList(); return; }
+    if (line.startsWith("## ")) {
+      closeList();
+      html += `<h3>${escapeHTML(line.slice(3))}</h3>`;
+    } else if (/^[-•]\s/.test(line)) {
+      if (listType !== "ul") { closeList(); html += "<ul>"; listType = "ul"; }
+      html += `<li>${escapeHTML(line.replace(/^[-•]\s/, ""))}</li>`;
+    } else if (/^\d+\.\s/.test(line)) {
+      if (listType !== "ol") { closeList(); html += "<ol>"; listType = "ol"; }
+      html += `<li>${escapeHTML(line.replace(/^\d+\.\s/, ""))}</li>`;
+    } else {
+      closeList();
+      html += `<p>${escapeHTML(line)}</p>`;
+    }
+  });
+  closeList();
+  return html;
+}
+
+/* ============ 工具 ============ */
+function escapeHTML(str) {
+  return String(str ?? "")
+    .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;").replace(/'/g, "&#39;");
+}
+
+/* ============ 事件绑定 ============ */
+let searchTimer;
+$("searchInput").addEventListener("input", (e) => {
+  clearTimeout(searchTimer);
+  searchTimer = setTimeout(() => { state.query = e.target.value; state.page = 1; render(); }, 120);
+});
+
+$("btnGallery").onclick = () => { state.view = "gallery"; syncViewBtn(); render(); };
+$("btnList").onclick = () => { state.view = "list"; syncViewBtn(); render(); };
+function syncViewBtn() {
+  $("btnGallery").classList.toggle("active", state.view === "gallery");
+  $("btnList").classList.toggle("active", state.view === "list");
+}
+
+$("drawerClose").onclick = closeDrawer;
+$("overlay").onclick = closeDrawer;
+document.addEventListener("keydown", (e) => { if (e.key === "Escape") closeDrawer(); });
+
+/* ============ 启动 ============ */
+loadData();
+</script>
+</body>
+</html>

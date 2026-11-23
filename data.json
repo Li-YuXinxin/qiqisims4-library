@@ -1,0 +1,92 @@
+{
+  "site": {
+    "emoji": "📚",
+    "title": "柒柒的 Sims4 资源库",
+    "notice": "本站仅收录网络公开索引链接，不存储任何资源本体；模组 / CC 版权归原作者所有，若作者提出删除要求，请联系站长立即下架。",
+    "categories": [
+      "模组推荐",
+      "房屋分享",
+      "家具CC",
+      "服装CC",
+      "实用工具"
+    ],
+    "pageSize": 12
+  },
+  "items": [
+    {
+      "title": "外出用餐大修 Mod v5（汉化）",
+      "cover": "",
+      "author": "示例作者",
+      "category": "模组推荐",
+      "gameVer": "1.129",
+      "tags": [
+        "功能 Mod",
+        "汉化",
+        "玩法扩展"
+      ],
+      "link": "https://pan.baidu.com/example1",
+      "code": "a1b2",
+      "desc": "## 功能说明\n- 扩充餐厅菜单与员工互动选项\n- 新增顾客情绪与排队机制\n- 支持中文界面\n\n## 安装须知\n1. 将压缩包解压至 Mods 文件夹\n2. 脚本类 Mod 请勿与同类餐厅大修包同时使用\n3. 进入游戏后在模组列表确认已启用"
+    },
+    {
+      "title": "现代简约公寓 · NOCC 房屋",
+      "cover": "",
+      "author": "示例作者",
+      "category": "房屋分享",
+      "gameVer": "1.129",
+      "tags": [
+        "NOCC",
+        "公寓",
+        "30x20"
+      ],
+      "link": "https://pan.baidu.com/example2",
+      "code": "c3d4",
+      "desc": "## 房屋信息\n- 地段：30x20\n- 楼层：2 层\n- 房间：2 卧 1 卫\n\n## 使用说明\n- 仅使用游戏原生物品，无需额外 CC\n- 放置前建议开启「移动秘籍」"
+    },
+    {
+      "title": "原木风客厅家具包",
+      "cover": "",
+      "author": "示例作者",
+      "category": "家具CC",
+      "gameVer": "1.128",
+      "tags": [
+        "家具",
+        "木质",
+        "客厅"
+      ],
+      "link": "https://pan.baidu.com/example3",
+      "code": "e5f6",
+      "desc": "## 物品清单\n- 三人沙发、单人椅、茶几\n- 落地灯、地毯\n\n## 安装须知\n解压后整体放入 Mods 文件夹；材质贴图已压缩，占用空间较小。"
+    },
+    {
+      "title": "古风汉服服饰套装",
+      "cover": "",
+      "author": "示例作者",
+      "category": "服装CC",
+      "gameVer": "1.129",
+      "tags": [
+        "服饰",
+        "古风",
+        "女装"
+      ],
+      "link": "https://pan.baidu.com/example4",
+      "code": "i9j0",
+      "desc": "## 物品清单\n- 交领上襦、齐腰襦裙\n- 外披、发饰一件\n\n## 安装须知\n解压后放入 Mods 文件夹；兼容 EA 原版身形，其他身形可能穿模。"
+    },
+    {
+      "title": "模组冲突排查小工具",
+      "cover": "",
+      "author": "示例作者",
+      "category": "实用工具",
+      "gameVer": "1.129",
+      "tags": [
+        "工具",
+        "排查",
+        "汉化"
+      ],
+      "link": "https://pan.baidu.com/example5",
+      "code": "g7h8",
+      "desc": "## 功能\n- 重复文件检测\n- 脚本 Mod 与 CC 分类统计\n- 导出排查报告\n\n## 注意\n工具仅做静态扫描，不修改游戏文件；使用前建议备份 Mods 文件夹。"
+    }
+  ]
+}
