@@ -66,14 +66,14 @@
       "cover": "",
       "author": "派星星",
       "category": "作者推荐",
-      "authorCategory": "房屋作者",
       "gameVer": "",
       "tags": [
-        "付费"
+        "免费"
       ],
       "link": "https://afdian.com/a/dekuailexiaolaotai09",
       "code": "4945961590",
-      "desc": "小红书号:4945961590\n这里贴的是爱发电链接"
+      "desc": "小红书号:4945961590\n这里贴的是爱发电链接",
+      "authorCategory": "房屋作者"
     },
     {
       "title": "作者推荐 - SephyXLF",
@@ -311,6 +311,36 @@
       "link": "https://www.sglynp.com/t163508",
       "code": "",
       "desc": "前往三宫六院自行下载"
+    },
+    {
+      "title": "作者推荐 - SixCirclesCC",
+      "cover": "",
+      "author": "SixCirclesCC",
+      "category": "作者推荐",
+      "gameVer": "",
+      "tags": [
+        "付费",
+        "nocc"
+      ],
+      "link": "https://afdian.com/item/0c91b826935e11ef902852540025c377",
+      "code": "4203102086",
+      "desc": "小红书号:4203102086\n这里贴的是爱发电链接，付费合集包\n也可以直接去工坊下载",
+      "authorCategory": "房屋作者"
+    },
+    {
+      "title": "作者推荐 - SixCirclesCC",
+      "cover": "",
+      "author": "SixCirclesCC",
+      "category": "作者推荐",
+      "gameVer": "",
+      "tags": [
+        "免费",
+        "nocc"
+      ],
+      "link": "https://www.curseforge.com/members/sixcirclescc/projects",
+      "code": "SixCirclesCC",
+      "desc": "小红书号:4203102086\n这里贴的是CF链接，也可以点击账号ID复制到S4MM下载",
+      "authorCategory": "服装作者"
     }
   ]
 }
