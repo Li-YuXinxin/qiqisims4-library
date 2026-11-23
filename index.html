@@ -133,6 +133,16 @@
     font-weight: 500;
     border-bottom-color: var(--text);
   }
+  .subtabs { display: flex; flex-wrap: wrap; gap: 6px; margin: 0 0 12px; }
+  .subtabs[hidden] { display: none; }
+  .subtab {
+    appearance: none; border: none; border-radius: var(--radius-sm);
+    background: var(--bg-chip); color: var(--text-sub);
+    font-family: var(--font); font-size: 13px;
+    padding: 5px 12px; cursor: pointer;
+  }
+  .subtab:hover { background: var(--bg-hover); color: var(--text); }
+  .subtab.active { background: var(--text); color: #fff; }
 
   /* ============ 工具行：版本筛选 + 视图 ============ */
   .toolbar {
@@ -280,6 +290,20 @@
     font-size: 56px; color: var(--text-faint); margin-bottom: 24px;
   }
   .drawer-cover img { width: 100%; height: 100%; object-fit: cover; }
+  .preview-trigger { width: 100%; border: 0; cursor: zoom-in; }
+  .image-preview {
+    position: fixed; inset: 0; z-index: 60;
+    display: flex; align-items: center; justify-content: center;
+    padding: 48px 24px; background: rgba(0, 0, 0, .85);
+    cursor: zoom-out;
+  }
+  .image-preview[hidden] { display: none; }
+  .image-preview img { max-width: 100%; max-height: 100%; object-fit: contain; cursor: default; }
+  .image-preview-close {
+    position: absolute; top: 12px; right: 16px;
+    border: 0; background: none; color: #fff;
+    font-size: 28px; cursor: pointer;
+  }
 
   .drawer-title { font-size: 28px; font-weight: 700; line-height: 1.3; letter-spacing: -0.01em; margin-bottom: 16px; }
 
@@ -335,7 +359,7 @@
       <span class="emoji" id="siteEmoji">📚</span>
       <span id="siteTitle">资源索引</span>
     </div>
-    <div class="site-sub" id="siteSub">按分类筛选，点击卡片查看网盘链接</div>
+    <div class="site-sub" id="siteSub">按分类筛选，点击卡片查看链接</div>
   </header>
 
   <!-- 搜索 -->
@@ -355,11 +379,14 @@
 
   <!-- 分类 Tabs -->
   <nav class="tabs" id="tabs"></nav>
+  <nav class="subtabs" id="subtabs" aria-label="作者分类" hidden></nav>
 
   <!-- 工具行 -->
   <div class="toolbar">
     <div style="display:flex; align-items:center; gap:12px;">
-      <span class="result-count" id="resultCount"></span>
+      <div>
+        <span class="result-count" id="resultCount"></span>
+      </div>
       <div class="view-switch">
         <button id="btnGallery" class="active" title="画廊视图">▦ 画廊</button>
         <button id="btnList" title="列表视图">☰ 列表</button>
@@ -386,13 +413,20 @@
   <div class="drawer-body" id="drawerBody"></div>
 </aside>
 
+<!-- 图片放大预览 -->
+<div class="image-preview" id="imagePreview" role="dialog" aria-modal="true" aria-label="图片预览" hidden>
+  <button class="image-preview-close" id="imagePreviewClose" aria-label="关闭图片预览">✕</button>
+  <img id="previewImage" alt="" />
+</div>
+
 <script>
 /* ============ 兜底数据（file:// 双击预览时使用；部署后以 data.json 为准） ============ */
 const FALLBACK_DATA = {
   site: {
     emoji: "📚", title: "模拟人生4 · 资源索引",
-    notice: "本站仅收录网络公开网盘索引链接，不存储任何资源本体；版权归原作者所有。",
-    categories: ["模组推荐", "房屋分享", "家具CC", "服装CC", "实用工具"],
+    notice: "本站仅收录网络公开索引链接，不存储任何资源本体；版权归原作者所有。",
+    categories: ["全部", "房屋分享", "家具CC", "服装CC", "作者推荐", "模组推荐", "实用工具"],
+    authorCategories: ["房屋作者", "家具作者", "服装作者", "动画作者"],
     pageSize: 12
   },
   items: []
@@ -401,7 +435,8 @@ const FALLBACK_DATA = {
 /* ============ 状态 ============ */
 const state = {
   data: FALLBACK_DATA,
-  category: "",
+  category: "全部",
+  authorCategory: "房屋作者",
   query: "",
   view: "gallery",
   page: 1
@@ -446,7 +481,8 @@ function initSiteMeta() {
 function getFiltered() {
   const q = state.query.trim().toLowerCase();
   return state.data.items.filter((it) => {
-    if (state.category && it.category !== state.category) return false;
+    if (state.category !== "全部" && it.category !== state.category) return false;
+    if (state.category === "作者推荐" && it.authorCategory !== state.authorCategory) return false;
     if (q) {
       const hay = [it.title, it.desc, it.author, it.gameVer, (it.tags || []).join(" ")]
         .join(" ").toLowerCase();
@@ -468,6 +504,18 @@ function renderTabs() {
     btn.onclick = () => { state.category = c; state.page = 1; render(); };
     box.appendChild(btn);
   });
+  const subBox = $("subtabs");
+  subBox.hidden = state.category !== "作者推荐";
+  subBox.innerHTML = "";
+  if (!subBox.hidden) {
+    (state.data.site.authorCategories || FALLBACK_DATA.site.authorCategories).forEach((c) => {
+      const btn = document.createElement("button");
+      btn.className = "subtab" + (state.authorCategory === c ? " active" : "");
+      btn.textContent = c;
+      btn.onclick = () => { state.authorCategory = c; state.page = 1; render(); };
+      subBox.appendChild(btn);
+    });
+  }
 }
 
 /* ============ 卡片 HTML ============ */
@@ -588,7 +636,7 @@ function openDrawer(idx) {
 
   const body = $("drawerBody");
   body.innerHTML = `
-    ${coverHTML(it, "drawer-cover")}
+    ${it.cover ? `<button class="drawer-cover preview-trigger" id="previewTrigger" aria-label="放大预览封面图片"><img src="${escapeHTML(it.cover)}" alt=""></button>` : coverHTML(it, "drawer-cover")}
     <h1 class="drawer-title">${escapeHTML(it.title)}</h1>
     <div class="props">
       <div class="prop"><span class="k">分类</span><span class="v">${escapeHTML(it.category || "-")}</span></div>
@@ -599,11 +647,19 @@ function openDrawer(idx) {
     <div class="drawer-detail">${renderDetail(it.detail || it.desc || "")}</div>
     <div class="actions">
       <a class="btn primary" href="${escapeHTML(it.link || "#")}" target="_blank" rel="noopener">
-        📦 打开网盘链接
+        📦 打开链接
       </a>
-      ${it.code ? `<button class="btn" id="copyCode">提取码：<span class="code">${escapeHTML(it.code)}</span></button>` : ""}
+      ${it.code ? `<button class="btn" id="copyCode">账号ID：<span class="code">${escapeHTML(it.code)}</span></button>` : ""}
     </div>
   `;
+
+  if (it.cover) {
+    $("previewTrigger").onclick = () => {
+      $("previewImage").src = it.cover;
+      $("imagePreview").hidden = false;
+      $("imagePreviewClose").focus();
+    };
+  }
 
   if (it.code) {
     $("copyCode").onclick = async () => {
@@ -619,7 +675,15 @@ function openDrawer(idx) {
   document.body.style.overflow = "hidden";
 }
 
+function closeImagePreview() {
+  if ($("imagePreview").hidden) return;
+  $("imagePreview").hidden = true;
+  $("previewImage").removeAttribute("src");
+  $("previewTrigger")?.focus();
+}
+
 function closeDrawer() {
+  closeImagePreview();
   $("drawer").classList.remove("open");
   $("overlay").classList.remove("open");
   document.body.style.overflow = "";
@@ -675,7 +739,13 @@ function syncViewBtn() {
 
 $("drawerClose").onclick = closeDrawer;
 $("overlay").onclick = closeDrawer;
-document.addEventListener("keydown", (e) => { if (e.key === "Escape") closeDrawer(); });
+$("imagePreviewClose").onclick = closeImagePreview;
+$("imagePreview").onclick = (e) => { if (e.target === $("imagePreview")) closeImagePreview(); };
+document.addEventListener("keydown", (e) => {
+  if (e.key !== "Escape") return;
+  if (!$("imagePreview").hidden) closeImagePreview();
+  else closeDrawer();
+});
 
 /* ============ 启动 ============ */
 loadData();
