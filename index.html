@@ -161,6 +161,7 @@
     padding: 3px;
     gap: 2px;
   }
+  .view-switch[hidden] { display: none; }
   .view-switch button {
     appearance: none; border: none; background: none;
     font-family: var(--font); font-size: 13px; color: var(--text-sub);
@@ -387,7 +388,7 @@
       <div>
         <span class="result-count" id="resultCount"></span>
       </div>
-      <div class="view-switch">
+      <div class="view-switch" id="viewSwitch">
         <button id="btnGallery" class="active" title="画廊视图">▦ 画廊</button>
         <button id="btnList" title="列表视图">☰ 列表</button>
       </div>
@@ -481,6 +482,7 @@ function initSiteMeta() {
 function getFiltered() {
   const q = state.query.trim().toLowerCase();
   return state.data.items.filter((it) => {
+    if (state.category === "全部" && it.category === "作者推荐") return false;
     if (state.category !== "全部" && it.category !== state.category) return false;
     if (state.category === "作者推荐" && it.authorCategory !== state.authorCategory) return false;
     if (q) {
@@ -501,7 +503,14 @@ function renderTabs() {
     const btn = document.createElement("button");
     btn.className = "tab" + (state.category === c ? " active" : "");
     btn.textContent = c;
-    btn.onclick = () => { state.category = c; state.page = 1; render(); };
+    btn.onclick = () => {
+      if (state.category !== c) {
+        state.category = c;
+        state.view = c === "作者推荐" ? "list" : "gallery";
+        state.page = 1;
+        render();
+      }
+    };
     box.appendChild(btn);
   });
   const subBox = $("subtabs");
@@ -574,6 +583,8 @@ function rowHTML(it, idx) {
 /* ============ 主渲染 ============ */
 function render() {
   renderTabs();
+  $("viewSwitch").hidden = state.category === "作者推荐";
+  syncViewBtn();
 
   const filtered = getFiltered();
   const pageSize = state.data.site.pageSize || 12;
@@ -730,8 +741,14 @@ $("searchInput").addEventListener("input", (e) => {
   searchTimer = setTimeout(() => { state.query = e.target.value; state.page = 1; render(); }, 120);
 });
 
-$("btnGallery").onclick = () => { state.view = "gallery"; syncViewBtn(); render(); };
-$("btnList").onclick = () => { state.view = "list"; syncViewBtn(); render(); };
+$("btnGallery").onclick = () => {
+  if (state.category === "作者推荐") return;
+  state.view = "gallery"; render();
+};
+$("btnList").onclick = () => {
+  if (state.category === "作者推荐") return;
+  state.view = "list"; render();
+};
 function syncViewBtn() {
   $("btnGallery").classList.toggle("active", state.view === "gallery");
   $("btnList").classList.toggle("active", state.view === "list");
